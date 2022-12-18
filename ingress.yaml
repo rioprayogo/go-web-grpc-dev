@@ -8,7 +8,7 @@ metadata:
 spec:
   tls:
   - hosts:
-      - gow-web.netstat.my.id
+      - go-web.netstat.my.id
       - grpc.netstat.my.id
 #    secretName: tls-wildcard
   rules:
@@ -19,7 +19,7 @@ spec:
         pathType: ImplementationSpecific
         backend:
           service:
-            name: words-web
+            name: go-web
             port: 
               number: 8081
   - host: grpc.netstat.my.id
