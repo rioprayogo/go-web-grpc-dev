@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc
+spec:
+  selector:
+    app: grpc
+  ports:
+    - port: 8082
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: grpc
+  template:
+    metadata:
+      labels:
+        app: grpc
+    spec:
+      containers:
+        - name: grpc
+          image: sigit26/grpc:version
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+          resources:
+              limits:
+                cpu: 350m
+                memory: 250Mi
+              requests:
+                cpu: 200m
+                memory: 200Mi
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 20
+            timeoutSeconds: 2
+            periodSeconds: 3
+            failureThreshold: 2
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 20
+            timeoutSeconds: 2
+            periodSeconds: 8
+            failureThreshold: 1
+      # imagePullSecrets:
+      #   - name: docker-credential
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: grpc
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1beta1
+    kind: Deployment
+    name: go-web
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+          name: cpu
+          targetAverageUtilization: 30

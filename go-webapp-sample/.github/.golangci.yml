@@ -1,0 +1,104 @@
+# ref: https://github.com/golangci/golangci-lint/blob/master/.golangci.example.yml
+# all available settings of specific linters
+run:
+  # The default concurrency value is the number of available CPU.
+  concurrency: 4
+  # Timeout for analysis, e.g. 30s, 5m.
+  # Default: 1m
+  timeout: 3m
+
+linters-settings:
+  dupl:
+    # tokens count to trigger issue, 150 by default
+    threshold: 150
+  goconst:
+    # minimal length of string constant, 3 by default
+    min-len: 3
+    # minimal occurrences count to trigger, 3 by default
+    min-occurrences: 2
+  gocyclo:
+    # minimal code complexity to report, 30 by default (but we recommend 10-20)
+    min-complexity: 15
+  gofmt:
+    # simplify code: gofmt with `-s` option, true by default
+    simplify: true
+  govet:
+    # report about shadowed variables
+    check-shadowing: true
+  ifshort:
+    # Maximum length of variable declaration measured in number of lines, after which linter won't suggest using short syntax.
+    # Has higher priority than max-decl-chars.
+    max-decl-lines: 1
+    # Maximum length of variable declaration measured in number of characters, after which linter won't suggest using short syntax.
+    max-decl-chars: 30
+  misspell:
+    # Correct spellings using locale preferences for US or UK.
+    # Default is to use a neutral variety of English.
+    # Setting locale to US will correct the British spelling of 'colour' to 'color'.
+    locale: US
+  nakedret:
+    # make an issue if func has more lines of code than this setting and it has naked returns; default is 30
+    max-func-lines: 20
+  revive:
+    ignore-generated-header: true
+    severity: warning
+    confidence: 0.8
+    errorCode: 0
+    warningCode: 0
+    rules:
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: var-declaration
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unused-parameter
+      - name: unreachable-code
+      - name: redefines-builtin-id
+
+linters:
+  disable-all: true
+  enable:
+    # default
+    # ref: https://golangci-lint.run/usage/linters/
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - varcheck
+    # add
+    - dupl
+    - goconst
+    - govet
+    - gofmt
+    - goimports
+    - misspell
+    - unconvert
+    - unparam
+    - ifshort
+    - nakedret
+    - revive
+
+# https://github.com/golangci/golangci/wiki/Configuration
+# latest version: https://github.com/golangci/golangci-lint
+service:
+  golangci-lint-version: 1.49.0
