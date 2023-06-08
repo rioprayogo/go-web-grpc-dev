@@ -44,9 +44,6 @@ jobs:
         if: ${{ contains(env.schemes, 'dev') }}
         run: |
           echo "curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--SUCCESS BUILD IOS FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'"
-        if: ${{ failure() }}
-        run: |
-          echo "curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--FAILED BUILD IOS FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'"
 
   # build_stg:
   #   runs-on: ubuntu-latest
