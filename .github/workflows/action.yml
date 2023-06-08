@@ -13,7 +13,7 @@ env:
 jobs:
   build_dev:
     runs-on: macos-latest
-    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.merged == true }}
+    if: ${{ github.event_name == github.event.pull_request.merged == true }}
 
 
     steps:
@@ -26,7 +26,7 @@ jobs:
           export schemes=$(./getSchemes.sh)
           echo "::set-env name=schemes::$schemes"
 
-      - name: Notify Slack notif
+      - name: Notify Slack notif slack
         # if: ${{ contains(env.schemes, 'dev') }}
         run: |
           echo "curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--AUTOMATION MEMULAI BUILD FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'"
