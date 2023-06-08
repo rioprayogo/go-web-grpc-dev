@@ -1,9 +1,9 @@
 name: Build iOS
 
-# on:
-#   push:
-#     branches:
-#       - test-cicd
+on:
+  push:
+    branches:
+      - main
 
 env:
   LANG: en_US.UTF-8
