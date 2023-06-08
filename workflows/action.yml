@@ -1,0 +1,99 @@
+name: Build iOS
+
+on:
+  push:
+    branches:
+      - test-cicd
+
+env:
+  LANG: en_US.UTF-8
+  LANGUAGE: en_US:en
+  LC_ALL: en_US.UTF-8
+
+jobs:
+  build_dev:
+    runs-on: macos-latest
+    if: ${{ contains(github.event.head_commit.message, 'Merge branch \'test-daily\' into \'test-cicd\'') }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup environment
+        run: |
+          export schemes=$(./getSchemes.sh)
+          echo "::set-env name=schemes::$schemes"
+
+      - name: Notify Slack
+        if: ${{ contains(env.schemes, 'dev') }}
+        run: |
+          echo "curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--AUTOMATION MEMULAI BUILD FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'"
+
+      - name: Build iOS dev
+        if: ${{ contains(env.schemes, 'dev') }}
+        run: |
+          echo "cp -rf /Users/audiooperator/devops/ApiKey.json $PWD/fastlane/"
+          echo "chmod 777 $PWD/fastlane/ApiKey.json"
+          echo "ls -la $PWD/fastlane/"
+          echo "cat $PWD/fastlane/ApiKey.json"
+          echo "fastlane "dev""
+
+      - name: Notify Slack
+        if: ${{ contains(env.schemes, 'dev') }}
+        run: |
+          echo "curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--SUCCESS BUILD IOS FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'"
+        if: ${{ failure() }}
+        run: |
+          curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--FAILED BUILD IOS FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'
+
+  # build_stg:
+  #   runs-on: ubuntu-latest
+  #   if: ${{ contains(github.event.head_commit.message, 'Merge branch \'test-daily\' into \'test-cicd\'') }}
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+
+  #     - name: Setup environment
+  #       run: |
+  #         export schemes=$(./getSchemes.sh)
+  #         echo "::set-env name=schemes::$schemes"
+
+  #     - name: Build iOS stg
+  #       if: ${{ contains(env.schemes, 'stg') }}
+  #       run: |
+  #         cp -rf /Users/audiooperator/devops/ApiKey.json $PWD/fastlane/
+  #         chmod 777 $PWD/fastlane/ApiKey.json
+  #         ls -la $PWD/fastlane/
+  #         cat $PWD/fastlane/ApiKey.json
+  #         fastlane "staging"
+
+  # build_prd:
+  #   runs-on: ubuntu-latest
+  #   if: ${{ contains(github.event.head_commit.message, 'Merge branch \'test-daily\' into \'test-cicd\'') }}
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+
+  #     - name: Setup environment
+  #       run: |
+  #         export schemes=$(./getSchemes.sh)
+  #         echo "::set-env name=schemes::$schemes"
+
+  #     - name: Build iOS prod
+  #       if: ${{ contains(env.schemes, 'prd') }}
+  #       run: |
+  #         cp -rf /Users/audiooperator/devops/ApiKey.json $PWD/fastlane/
+  #         chmod 777 $PWD/fastlane/ApiKey.json
+  #         ls -la $PWD/fastlane/
+  #         cat $PWD/fastlane/ApiKey.json
+  #         fastlane "production"
+
+  #     - name: Notify Slack
+  #       if: ${{ contains(env.schemes, 'prd') }}
+  #       run: |
+  #         curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--SUCCESS BUILD IOS FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'
+  #       if: ${{ failure() }}
+  #       run: |
+  #         curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--FAILED BUILD IOS FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'
