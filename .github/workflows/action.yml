@@ -1,9 +1,9 @@
 name: Build iOS
 
-on:
-  push:
-    branches:
-      - test-cicd
+# on:
+#   push:
+#     branches:
+#       - test-cicd
 
 env:
   LANG: en_US.UTF-8
@@ -16,6 +16,14 @@ jobs:
     if: ${{ contains(github.event.head_commit.message, 'Merge branch \'test-daily\' into \'test-cicd\'') }}
 
     steps:
+      - name: Check if pull request is approved
+        id: pr
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -44,7 +52,7 @@ jobs:
           echo "curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--SUCCESS BUILD IOS FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'"
         if: ${{ failure() }}
         run: |
-          curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--FAILED BUILD IOS FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'
+          echo "curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--FAILED BUILD IOS FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'"
 
   # build_stg:
   #   runs-on: ubuntu-latest
