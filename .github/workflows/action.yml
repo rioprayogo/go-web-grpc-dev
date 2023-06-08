@@ -27,12 +27,12 @@ jobs:
           echo "::set-env name=schemes::$schemes"
 
       - name: Notify Slack notif
-        if: ${{ contains(env.schemes, 'dev') }}
+        # if: ${{ contains(env.schemes, 'dev') }}
         run: |
           echo "curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--AUTOMATION MEMULAI BUILD FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'"
 
       - name: Build iOS dev
-        if: ${{ contains(env.schemes, 'dev') }}
+        # if: ${{ contains(env.schemes, 'dev') }}
         run: |
           echo "cp -rf /Users/audiooperator/devops/ApiKey.json $PWD/fastlane/"
           echo "chmod 777 $PWD/fastlane/ApiKey.json"
@@ -41,7 +41,7 @@ jobs:
           echo "fastlane "dev""
 
       - name: Notify Slack
-        if: ${{ contains(env.schemes, 'dev') }}
+        # if: ${{ contains(env.schemes, 'dev') }}
         run: |
           echo "curl -X POST -H 'Content-type: application/json; charset=utf-8' --data '{ "channel": "#gitlab-notif-ios", "username": "webhookbot", "icon_emoji": ":rocket:", "text": "--SUCCESS BUILD IOS FOR ${{ github.workflow }}"}' 'https://hooks.slack.com/services/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'"
 
