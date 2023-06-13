@@ -1,0 +1,182 @@
+#!/usr/bin/env groovy
+// test-004
+pipeline {
+    agent {
+        label 'master'
+    }
+
+    options {
+        skipDefaultCheckout()
+        timestamps()
+    }
+
+    environment {
+        ENV = 'env_test'
+        CONFIG_PATH = '/home/koanba/devops/config/frontend'
+        CONFIG_MOK = "${CONFIG_PATH}/${ENV}/mok"
+        ARTIFACT_LOCATION = '/home/koanba/devops/artifact/frontend'
+        WRAP_MOK = "${ARTIFACT_LOCATION}/${ENV}/mok"
+        ARTIFACT_MOK = 'artifact-mok.tar'
+        JENKINS_IP = '192.168.0.102'
+    }
+
+    stages {
+        stage('Extract Commit Message') {
+            when {
+                expression { env.GIT_BRANCH == 'origin/main' }
+            }
+            steps {
+                script {
+                    COMMIT_MESSAGE = sh(script: 'git log --format=%B -n 1', returnStdout: true).trim()
+                    echo ${env.GIT_BRANCH}
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            when {
+                expression { env.GIT_BRANCH == 'origin/main' }
+            }
+            steps {
+                script {
+                    echo 'Skipping test'
+                }
+            }
+        }
+
+        stage('Build Artifact') {
+            when {
+                expression { env.GIT_BRANCH == 'origin/main' }
+            }
+            steps {
+                script {
+                    // slackSend(
+                    //     // channel: '#server-notif',
+                    //     channel: '#devops-test-notif',
+                    //     tokenCredentialId: 'slack-secret',
+                    //     color: 'good',
+                    //     message: "*${env.JOB_NAME}* - ${currentBuild.displayName} Build process started"
+                    // )
+                    echo "build artifact"
+                    // sh """
+                    // whoami
+                    // cp ${CONFIG_MOK}/.env .
+                    // rm -rf dist
+                    // npm install
+                    // npm run build
+                    // cd dist/
+                    // rm -rf ${ARTIFACT_MOK}
+                    // tar cvf ${ARTIFACT_MOK} *
+                    // rm -rf ${WRAP_MOK}/${ARTIFACT_MOK}
+                    // cp ${ARTIFACT_MOK} ${WRAP_MOK}/
+                    // """
+                    // slackSend(
+                    //     // channel: '#server-notif',
+                    //     channel: '##devops-test-notif',
+                    //     tokenCredentialId: 'slack-secret',
+                    //     color: 'good',
+                    //     message: "*${env.JOB_NAME}* - ${currentBuild.displayName} Build process completed"
+                    // )
+                }
+            }
+            // post {
+            //     always {
+            //         archiveArtifacts artifacts: 'dist/*.tar', onlyIfSuccessful: true
+            //     }
+            // }
+        }
+
+        stage('Release') {
+            when {
+                expression { env.GIT_BRANCH == 'origin/main' }
+            }
+            steps {
+                script {
+                    // slackSend(
+                    //     // channel: '#server-notif',
+                    //     channel: '##devops-test-notif',
+                    //     tokenCredentialId: 'slack-secret',
+                    //     color: 'good',
+                    //     message: "*${env.JOB_NAME}* - ${currentBuild.displayName} Release process started"
+                    // )
+                    // def k = 'Release-MOK-To-KOANBA-TEST-01'
+                    // def paramData = k.split('-')
+                    // def appName = paramData[1]
+                    // def serverName = k.replaceAll('Release-' + appName + '-To-', '')
+                    // println("Mulai proses release ${appName} pada server ${serverName}")
+
+                    // node(serverName) {
+                    //     def ARTIFACT_NAME = ARTIFACT_MOK
+                    //     def HOME_RELEASE = '/usr/share/nginx/html/frontend'
+                    //     def HOME_MOK = "${HOME_RELEASE}/mok"
+                    //     def HOME_APP = HOME_MOK
+                    //     def WRAP_APP = WRAP_MOK
+
+                        // Clear known host
+                    echo "realese"
+                        // sh 'cat > ~/.ssh/known_hosts'
+                        // sh "ssh-keyscan -p 50567 -t ecdsa ${JENKINS_IP} >> ~/.ssh/known_hosts"
+                        // sh "scp -P 50567 koanba@${JENKINS_IP}:${WRAP_APP}/${ARTIFACT_NAME} /tmp"
+                        // sh """
+                        // # Copy tar file to folder-from-source
+                        // mkdir -p ${HOME_RELEASE}
+                        // rm -rf ${HOME_APP}
+                        // mkdir ${HOME_APP}
+                        // # Untar the file
+                        // cd ${HOME_APP}
+                        // tar -xvf /tmp/${ARTIFACT_NAME}
+                        // """
+                        // slackSend(
+                        //     // channel: '#server-notif',
+                        //     channel: '##devops-test-notif',
+                        //     tokenCredentialId: 'slack-secret',
+                        //     color: 'good',
+                        //     message: "*${env.JOB_NAME}* - ${currentBuild.displayName} Release process completed"
+                        // )
+                    }
+                    // slackSend(
+                    //     // channel: '#build',
+                    //     channel: '##devops-test-notif',
+                    //     tokenCredentialId: 'slack-secret',
+                    //     color: 'good',
+                    //     message: "*Latest Frontend MOK env_test application can be previewed at:* https://test-mok.kipaskipas.com/"
+                    // )
+                }
+            }
+        }
+    }
+
+//     triggers {
+//         pollSCM('*/5 * * * *')
+//     }
+
+//     post {
+//         success {
+//             slackSend(
+//                 // channel: '#server-notif',
+//                 channel: '#devops-test-notif',
+//                 tokenCredentialId: 'slack-secret',
+//                 color: 'good',
+//                 message: "*${env.JOB_NAME}* - ${currentBuild.displayName} :white_check_mark: ${currentBuild.currentResult} after ${currentBuild.durationString.replace(' and counting', '')} (<${currentBuild.absoluteUrl}|Open>)\n*Commit Message*: ${COMMIT_MESSAGE}\n*GitHub*"
+//             )
+//         }
+//         failure {
+//             slackSend(
+//                 // channel: '#server-notif',
+//                 channel: '#devops-test-notif',
+//                 tokenCredentialId: 'slack-secret',
+//                 color: 'danger',
+//                 message: "*${env.JOB_NAME}* - ${currentBuild.displayName} :x: ${currentBuild.currentResult} after ${currentBuild.durationString.replace(' and counting', '')} (<${currentBuild.absoluteUrl}|Open>)\n*Commit Message*: ${COMMIT_MESSAGE}\n*GitHub*"
+//             )
+//         }
+//         unstable {
+//             slackSend(
+//                 // channel: '#server-notif',
+//                 channel: '#devops-test-notif',
+//                 tokenCredentialId: 'slack-secret',
+//                 color: 'warning',
+//                 message: "*${env.JOB_NAME}* - ${currentBuild.displayName} :warning: ${currentBuild.currentResult} after ${currentBuild.durationString.replace(' and counting', '')} (<${currentBuild.absoluteUrl}|Open>)\n*Commit Message*: ${COMMIT_MESSAGE}\n*GitHub*"
+//             )
+//         }
+//     }
+// }
