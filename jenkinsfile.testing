@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-// test-005
+// test-006
 pipeline {
     agent {
         label 'master'
