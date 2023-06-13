@@ -22,9 +22,9 @@ pipeline {
 
     stages {
         stage('Extract Commit Message') {
-            when {
-                expression { env.GIT_BRANCH == 'main' }
-            }
+            // when {
+            //     expression { env.GIT_BRANCH == 'main' }
+            // }
             steps {
                 script {
                     COMMIT_MESSAGE = sh(script: 'git log --format=%B -n 1', returnStdout: true).trim()
