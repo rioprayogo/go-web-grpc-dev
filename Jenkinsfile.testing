@@ -23,7 +23,7 @@ pipeline {
     stages {
         stage('Extract Commit Message') {
             when {
-                expression { env.GIT_BRANCH == 'origin/main' }
+                expression { env.GIT_BRANCH == 'main' }
             }
             steps {
                 script {
