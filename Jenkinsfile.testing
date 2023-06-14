@@ -33,14 +33,13 @@ pipeline {
                         url: 'https://github.com/rioprayogo/go-web-grpc-dev'
                     ]]
                 ])
-                script {
-                    echo  ${env.GIT_BRANCH}
+                // script {
+                //     echo  ${env.GIT_BRANCH}
                     // COMMIT_MESSAGE = sh(script: 'git log --format=%B -n 1', returnStdout: true).trim()
                     // GIT_AUTHOR = sh(script: 'git log --format=%an -n 1', returnStdout: true).trim()
-                }
+                // }
             }
         }
-        
         
         
         stage('Extract Commit Message') {
